@@ -2,11 +2,16 @@ version: "3.9"
 
 services:
   api:
-    container_name: "snippet_permits"
+    container_name: "snippet-permits"
     build:
       context: .
     environment:
-      DATABASE_URL: postgresql://localhost:5433/${POSTGRES_DB}
+      - POSTGRES_DOMAIN=snippet-permits-db
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - AUTH0_API=${AUTH0_API}
+      - AUTH0_DOMAIN=${AUTH0_DOMAIN}
     ports:
       - "8080:8080"
     depends_on:
@@ -14,7 +19,7 @@ services:
 
   db:
     image: postgres:alpine
-    container_name: "snippet_permits_db"
+    container_name: "snippet-permits-db"
     restart: always
     environment:
       - POSTGRES_DB=${POSTGRES_DB}
