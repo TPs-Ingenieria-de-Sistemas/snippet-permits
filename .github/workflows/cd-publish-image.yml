@@ -14,14 +14,9 @@ jobs:
           VERSION=$(grep "^version" build.gradle | sed 's/version[[:space:]]*=[[:space:]]*//g' | tr -d \'\")
           PROJECT_NAME=$(grep "^rootProject.name" settings.gradle | sed 's/rootProject.name[[:space:]]*=[[:space:]]*//g' | tr -d \'\")
 
+      - name: Log in to GitHub Container Registry
+        run: echo ${{ secrets.GH_PAT }} | docker login ghcr.io -u ${{ secrets.GH_USER }} --password-stdin
 
-      - name: Login to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.GH_USER }}
-          password: ${{ secrets.GH_PAT }}
-
-          
       - uses: actions/checkout@v4
       - name: build and push image
         run: |
