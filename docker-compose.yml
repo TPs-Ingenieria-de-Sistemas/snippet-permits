@@ -1,10 +1,40 @@
 version: "3.9"
 
 services:
-
   api:
-    container_name: "snippet_permits"
+    container_name: "snippet-permits"
     build:
       context: .
+    environment:
+      - POSTGRES_DOMAIN=snippet-permits-db
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - AUTH0_API=${AUTH0_API}
+      - AUTH0_DOMAIN=${AUTH0_DOMAIN}
     ports:
       - "8080:8080"
+    depends_on:
+      - db
+
+  db:
+    image: postgres:alpine
+    container_name: "snippet-permits-db"
+    restart: always
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - PGPORT=5433
+    ports:
+      - '5433:5433'
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ 'CMD-SHELL', 'pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}' ]
+      interval: 1s
+      timeout: 1s
+      retries: 15
+
+volumes:
+  db-data:

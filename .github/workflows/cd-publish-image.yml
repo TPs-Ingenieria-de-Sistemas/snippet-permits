@@ -1,0 +1,26 @@
+name: CD PUBLISH IMAGE
+
+on:
+  push:
+    branches:
+      - dev
+
+jobs:
+  build_and_publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Extract gradle proyect vesrion and name 
+        run: |
+          VERSION=$(grep "^version" build.gradle | sed 's/version[[:space:]]*=[[:space:]]*//g' | tr -d \'\")
+          PROJECT_NAME=$(grep "^rootProject.name" settings.gradle | sed 's/rootProject.name[[:space:]]*=[[:space:]]*//g' | tr -d \'\")
+
+
+      - uses: actions/checkout@v4
+      - name: build and push image
+        run: |
+          docker login --username ${{ secrets.GH_USER }} --password ${{ secrets.GH_PAT }} ghcr.io
+          docker build . --tag ghcr.io/tps-ingenieria-de-sistemas/{{ env.PROJECT_NAME }}:{{ env.VERSION}},ghcr.io/tps-ingenieria-de-sistemas/{{ env.PROJECT_NAME }}:latest
+          docker push ghcr.io/tps-ingenieria-de-sistemas/{{ env.PROJECT_NAME }}:{{ env.VERSION }}
+
+
+
