@@ -14,6 +14,9 @@ jobs:
           VERSION=$(grep "^version" build.gradle | sed 's/version[[:space:]]*=[[:space:]]*//g' | tr -d \'\")
           PROJECT_NAME=$(grep "^rootProject.name" settings.gradle | sed 's/rootProject.name[[:space:]]*=[[:space:]]*//g' | tr -d \'\")
 
+          echo $VERSION
+          echo $PROJECT_NAME
+          
           echo "VERSION=$VERSION" >> $GITHUB_ENV
           echo "PROJECT_NAME=$PROJECT_NAME" >> $GITHUB_ENV
 
