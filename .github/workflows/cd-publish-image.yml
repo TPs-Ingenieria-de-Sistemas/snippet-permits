@@ -16,7 +16,7 @@ jobs:
 
       - name: Log in to GitHub Container Registry
         run: |
-          echo "${{ secrets.GH_PAT }}" | docker login ghcr.io -u ${{ secrets.GH_USER }} --password-stdin
+          echo ${{ secrets.GH_PAT }} | docker login ghcr.io -u ${{ secrets.GH_USER }} --password-stdin
 
       - uses: actions/checkout@v4
       - name: build and push image
