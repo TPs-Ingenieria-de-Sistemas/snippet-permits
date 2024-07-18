@@ -40,4 +40,4 @@ jobs:
           script: |
             cd infra
             sudo docker compose pull
-            sudo docker compose run -d
+            sudo docker compose up -d
