@@ -1,0 +1,22 @@
+name: CD UPDATE DEV SERVER WITH NEW IMAGE
+
+on:
+  workflow_run:
+    workflows: ["CD PUBLISH IMAGE"]
+    types:
+      - completed
+
+jobs:
+  update-server-image-and-run:
+    runs-on: ubuntu-latest
+    steps:
+      - name: connect-and-run
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.DEV_URL }}
+          username: ${{ secrets.DEV_USERNAME }}
+          key: ${{ secrets.SSH_DEV_PRIVATE_KEY }}
+          script: |
+            cd infra
+            docker compose pull
+            docker compose run
