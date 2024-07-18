@@ -39,5 +39,5 @@ jobs:
           key: ${{ secrets.SSH_DEV_PRIVATE_KEY }}
           script: |
             cd infra
-            docker compose pull
-            docker compose run
+            sudo docker compose pull
+            sudo docker compose run
