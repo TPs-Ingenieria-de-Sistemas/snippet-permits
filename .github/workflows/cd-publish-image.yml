@@ -30,6 +30,7 @@ jobs:
           docker push ghcr.io/tps-ingenieria-de-sistemas/${{ env.PROJECT_NAME }}:${{ env.VERSION }}
           docker push ghcr.io/tps-ingenieria-de-sistemas/${{ env.PROJECT_NAME }}:latest
 
+
       - name: connect-and-run
         uses: appleboy/ssh-action@master
         with:
