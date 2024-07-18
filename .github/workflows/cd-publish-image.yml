@@ -1,4 +1,4 @@
-name: CD PUBLISH IMAGE
+name: CD PUBLISH IMAGE AND UPDATE DEV
 
 on:
   push:
@@ -29,3 +29,14 @@ jobs:
           docker build . --tag ghcr.io/tps-ingenieria-de-sistemas/${{ env.PROJECT_NAME }}:${{ env.VERSION }} --tag ghcr.io/tps-ingenieria-de-sistemas/${{ env.PROJECT_NAME }}:latest
           docker push ghcr.io/tps-ingenieria-de-sistemas/${{ env.PROJECT_NAME }}:${{ env.VERSION }}
           docker push ghcr.io/tps-ingenieria-de-sistemas/${{ env.PROJECT_NAME }}:latest
+
+      - name: connect-and-run
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.DEV_URL }}
+          username: ${{ secrets.DEV_USERNAME }}
+          key: ${{ secrets.SSH_DEV_PRIVATE_KEY }}
+          script: |
+            cd infra
+            docker compose pull
+            docker compose run
