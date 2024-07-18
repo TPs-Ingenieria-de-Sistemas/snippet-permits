@@ -1,0 +1,22 @@
+name: UPDATE PROD SERVER WITH IMAGES
+
+on:
+  push:
+    branches:
+      - master
+      - main
+
+jobs:
+  connect-and-update-server:
+    runs-on: ubuntu-latest
+    steps:
+      - name: connect-and-run
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.PROD_URL }}
+          username: ${{ secrets.PROD_USERNAME }}
+          key: ${{ secrets.SSH_PROD_PRIVATE_KEY }}
+          script: |
+            cd infra
+            sudo docker compose pull
+            sudo docker compose up -d
