@@ -13,7 +13,7 @@ public class SecurityConfig {
         return http
                 .authorizeHttpRequests((authorize) -> authorize
                         .requestMatchers("/permits/**").authenticated()
-                        .requestMatchers("/health").not().authenticated()
+                        .requestMatchers("/permits/health").not().authenticated()
                 )
                 .cors(Customizer.withDefaults())
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))
