@@ -6,6 +6,7 @@ services:
     build:
       context: .
     environment:
+      - PERMITS_SERVER_PORT=${PERMITS_SERVER_PORT}
       - POSTGRES_DOMAIN=snippet-permits-db
       - POSTGRES_DB=${POSTGRES_DB}
       - POSTGRES_USER=${POSTGRES_USER}
@@ -13,7 +14,7 @@ services:
       - AUTH0_API=${AUTH0_API}
       - AUTH0_DOMAIN=${AUTH0_DOMAIN}
     ports:
-      - "8080:8080"
+      - "8080:8085"
     depends_on:
       - db
 
