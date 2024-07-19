@@ -6,7 +6,7 @@ services:
     build:
       context: .
     environment:
-      - PERMITS_SERVER_PORT=${PERMITS_SERVER_PORT}
+      - PORT=${PORT}
       - POSTGRES_DOMAIN=snippet-permits-db
       - POSTGRES_DB=${POSTGRES_DB}
       - POSTGRES_USER=${POSTGRES_USER}
