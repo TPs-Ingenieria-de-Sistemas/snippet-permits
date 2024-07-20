@@ -12,7 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/permits")
+@RequestMapping("/")
 public class PermitController {
     private final PermitService permitService;
     private final UserService userService;
