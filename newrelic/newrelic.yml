@@ -386,15 +386,15 @@ common: &default_settings
 
 development:
   <<: *default_settings
-  app_name: 'snippet-service (Development)'
+  app_name: 'snippet-permits (Development)'
 
 test:
   <<: *default_settings
-  app_name: 'snippet-service (Test)'
+  app_name: 'snippet-permits (Test)'
 
 production:
   <<: *default_settings
 
 staging:
   <<: *default_settings
-  app_name: 'snippet-service (Staging)'
+  app_name: 'snippet-permits (Staging)'
