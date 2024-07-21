@@ -12,7 +12,7 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
                 .authorizeHttpRequests((authorize) -> authorize
-                        .requestMatchers("/health").not().authenticated()
+                        .requestMatchers("/health","/health/**").not().authenticated()
                         .requestMatchers("/**").authenticated()
                 )
                 .cors(Customizer.withDefaults())
