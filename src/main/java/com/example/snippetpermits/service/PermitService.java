@@ -17,7 +17,7 @@ public class PermitService {
         this.repository = repository;
     }
 
-    public Permit addOwnerPermits(Long ownerId, String fileName) {
+    public Permit addOwnerPermits(String ownerId, String fileName) {
         try {
             Permit permit = new Permit(ownerId, fileName);
             return repository.save(permit);
@@ -29,7 +29,7 @@ public class PermitService {
         }
     }
 
-    public Permit sharePermitsForSnippet(Long ownerId, String fileName, Long userId, Permissions permissions) {
+    public Permit sharePermitsForSnippet(String ownerId, String fileName, String userId, Permissions permissions) {
         if (theUserIsTheOwner(userId, ownerId)) throw new ForbiddenException("Owner can't modify it's own permissions");
         if (!isOwner(ownerId, fileName)) throw new ForbiddenException("the user is not the owner of the file");
 
@@ -40,7 +40,7 @@ public class PermitService {
         return repository.save(permit);
     }
 
-    public Permit removePermitsForSnippet(Long ownerId, String fileName, Long userId, Permissions permissions) {
+    public Permit removePermitsForSnippet(String ownerId, String fileName, String userId, Permissions permissions) {
         if (theUserIsTheOwner(userId, ownerId)) throw new ForbiddenException("Owner can't modify it's own permissions");
         if (!isOwner(ownerId, fileName)) throw new ForbiddenException("the user is not the owner of the file");
 
@@ -57,7 +57,7 @@ public class PermitService {
         }
     }
 
-    public boolean userHasPermission(Long userId, Long ownerId, String fileName, Permissions permissions) {
+    public boolean userHasPermission(String userId, String ownerId, String fileName, Permissions permissions) {
         if (theUserIsTheOwner(userId, ownerId)) return true;
 
         Permit permit = repository.findByFileNameAndOwnerIdAndUserId(fileName, ownerId, userId);
@@ -66,12 +66,12 @@ public class PermitService {
         return permit.userHasPermission(permissions);
     }
 
-    private boolean isOwner(Long ownerId, String fileName) {
+    private boolean isOwner(String ownerId, String fileName) {
         Permit permit = repository.findByFileNameAndOwnerIdAndUserId(fileName, ownerId, ownerId);
         return permit != null;
     }
 
-    private boolean theUserIsTheOwner(Long userId, Long ownerId) {
+    private boolean theUserIsTheOwner(String userId, String ownerId) {
         return Objects.equals(userId, ownerId);
     }
 }

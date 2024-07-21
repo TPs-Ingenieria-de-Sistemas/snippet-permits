@@ -24,7 +24,7 @@ public class PermitController {
 
     @PostMapping("/manage/as-owner/{fileName}")
     public ResponseEntity<Permit> postOwnerPermit(@PathVariable String fileName) {
-        Long ownerId = userService.getUserId();
+        String ownerId = userService.getUserId();
         Permit permit = permitService.addOwnerPermits(ownerId, fileName);
         return ResponseEntity.status(HttpStatus.CREATED).body(permit);
     }
@@ -34,7 +34,7 @@ public class PermitController {
             @RequestBody @Valid PermitDTO permitDTO,
             @PathVariable String fileName
     ) {
-        Long ownerId = userService.getUserId();
+        String ownerId = userService.getUserId();
         Permit permit = permitService.sharePermitsForSnippet(
                 ownerId,
                 fileName,
@@ -49,7 +49,7 @@ public class PermitController {
             @RequestBody @Valid PermitDTO permitDTO,
             @PathVariable String fileName
     ) {
-        Long ownerId = userService.getUserId();
+        String ownerId = userService.getUserId();
         Permit permit = permitService.removePermitsForSnippet(
                 ownerId,
                 fileName,
@@ -61,11 +61,11 @@ public class PermitController {
 
     @GetMapping("/{ownerId}/{fileName}")
     public ResponseEntity<Boolean> hasPermissions(
-            @PathVariable Long ownerId,
+            @PathVariable String ownerId,
             @PathVariable String fileName,
             @RequestParam Permissions permission
     ) {
-        Long userId = userService.getUserId();
+        String userId = userService.getUserId();
         Boolean hasPermission = permitService.userHasPermission(userId, ownerId, fileName, permission);
         return ResponseEntity.status(HttpStatus.OK).body(hasPermission);
     }

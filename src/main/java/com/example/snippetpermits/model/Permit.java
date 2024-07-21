@@ -19,22 +19,22 @@ public class Permit {
     @Id
     @GeneratedValue(strategy =  GenerationType.IDENTITY)
     Long id;
-    Long userId;
-    Long ownerId;
+    String userId;
+    String ownerId;
     String fileName;
     Permissions rwx;
 
     /**
     creates a permit for a owner with all permission granted
      */
-    public Permit(Long ownerId, String fileName) {
+    public Permit(String ownerId, String fileName) {
         userId = ownerId;
         this.ownerId = ownerId;
         this.fileName = fileName;
         rwx = Permissions.RWX;
     }
 
-    public Permit(Long userId, Long ownerId, String fileName, Permissions permissions) {
+    public Permit(String userId, String ownerId, String fileName, Permissions permissions) {
         this.userId = userId;
         this.ownerId = ownerId;
         this.fileName = fileName;

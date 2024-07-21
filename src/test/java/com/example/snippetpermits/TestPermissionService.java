@@ -6,9 +6,6 @@ import com.example.snippetpermits.model.Permissions;
 import com.example.snippetpermits.model.Permit;
 import com.example.snippetpermits.service.PermitService;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.EnumSource;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -31,7 +28,7 @@ public class TestPermissionService {
 
     @Test
     public void test001_aUserCreatedAFileSoAssignTheAllPermitsForTheOwner() {
-        long userId = 1L;
+        String userId = "1";
         String fileName = "test-file";
 
         Permit permit = permitService.addOwnerPermits(userId, fileName);
@@ -42,7 +39,7 @@ public class TestPermissionService {
     }
 
     @Test void test002_userCreatedFileWithSameNameShouldThrowConflict() {
-        long userId = 1L;
+        String userId = "1";
         String fileName = "test-file";
 
         permitService.addOwnerPermits(userId, fileName);
@@ -53,7 +50,7 @@ public class TestPermissionService {
     }
 
     @Test void test003_removePermitsFromOwnerIsForbidden() {
-        long userId = 1L;
+        String userId = "1";
         String fileName = "test-file";
 
         assertThrowsExactly(
@@ -63,8 +60,8 @@ public class TestPermissionService {
     }
 
     @Test void test004_sharePermissionToFileToOtherUser() {
-        long ownerId = 1L;
-        long userId = 2L;
+        String ownerId = "1";
+        String userId = "2";
         String fileName = "test-file";
 
         permitService.addOwnerPermits(ownerId, fileName);
@@ -78,7 +75,7 @@ public class TestPermissionService {
 
 
     @Test void test005_sharePermissionsToOwner() {
-        long ownerId = 1L;
+        String ownerId = "1";
         String fileName = "test-file";
 
         assertThrowsExactly(
@@ -88,8 +85,8 @@ public class TestPermissionService {
     }
 
     @Test void test006_shareAFileThatTheOwnerDoesNotHaveThrowForbidden() {
-        long ownerId = 1L;
-        long userId = 2L;
+        String ownerId = "1";
+        String userId = "2";
         String fileName = "test-file";
 
         assertThrowsExactly(
@@ -99,8 +96,8 @@ public class TestPermissionService {
     }
 
     @Test void test007_removePermissionsFromUser() {
-        long ownerId = 1L;
-        long userId = 2L;
+        String ownerId = "1";
+        String userId = "2";
         String fileName = "test-file";
 
         permitService.addOwnerPermits(ownerId, fileName);
@@ -114,9 +111,9 @@ public class TestPermissionService {
     }
 
     @Test void test008_removePermissionsFromUserWhereOwnerDoesNotHaveFileThenThrowForbidden() {
-        long ownerId = 1L;
-        long userId = 2L;
-        long userThatRemovePermitsId = 3L;
+        String ownerId = "1";
+        String userId = "2";
+        String userThatRemovePermitsId = "3";
         String fileName = "test-file";
 
         permitService.addOwnerPermits(ownerId, fileName);
@@ -129,8 +126,8 @@ public class TestPermissionService {
     }
 
     @Test void test009_userHasPermissionWhenHasAllPermissionsThenTrue() {
-        long ownerId = 1L;
-        long userId = 2L;
+        String ownerId = "1";
+        String userId = "2";
         String fileName = "test-file";
 
         permitService.addOwnerPermits(ownerId, fileName);
@@ -143,8 +140,8 @@ public class TestPermissionService {
     }
 
     @Test void test010_userHasPermissionWhenHasSomePermissionsThenTrueAndFalse() {
-        long ownerId = 1L;
-        long userId = 2L;
+        String ownerId = "1";
+        String userId = "2";
         String fileName = "test-file";
 
         permitService.addOwnerPermits(ownerId, fileName);
