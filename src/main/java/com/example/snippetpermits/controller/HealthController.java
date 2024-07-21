@@ -10,16 +10,16 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/health")
 public class HealthController {
-    private static final Logger logger = LoggerFactory.getLogger(HealthController.class);
+	private static final Logger logger = LoggerFactory.getLogger(HealthController.class);
 
-    @GetMapping
-    public ResponseEntity<String> getHealth() {
-        logger.atInfo().log("health: ok");
-        return ResponseEntity.ok().build();
-    }
-    @GetMapping("fake-error")
-    public ResponseEntity<String> fakeError() {
-        logger.atError().log("health: ko");
-        return ResponseEntity.internalServerError().build();
-    }
+	@GetMapping
+	public ResponseEntity<String> getHealth() {
+		logger.atInfo().log("health: ok");
+		return ResponseEntity.ok().build();
+	}
+	@GetMapping("fake-error")
+	public ResponseEntity<String> fakeError() {
+		logger.atError().log("health: ko");
+		return ResponseEntity.internalServerError().build();
+	}
 }

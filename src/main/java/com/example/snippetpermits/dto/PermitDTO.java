@@ -6,8 +6,8 @@ import lombok.Getter;
 
 @Getter
 public class PermitDTO {
-    @NotNull
-    String userId;
-    @NotNull
-    Permissions permissions;
+	@NotNull
+	String userId;
+	@NotNull
+	Permissions permissions;
 }

@@ -6,8 +6,8 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class UserService {
-    public String getUserId() {
-        Jwt jwt = (Jwt) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return jwt.getClaim("sub");
-    }
+	public String getUserId() {
+		Jwt jwt = (Jwt) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		return jwt.getClaim("sub");
+	}
 }

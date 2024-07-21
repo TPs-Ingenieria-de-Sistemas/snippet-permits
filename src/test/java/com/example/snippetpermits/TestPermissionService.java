@@ -1,5 +1,7 @@
 package com.example.snippetpermits;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import com.example.snippetpermits.exeption.ConflictException;
 import com.example.snippetpermits.exeption.ForbiddenException;
 import com.example.snippetpermits.model.Permissions;
@@ -13,144 +15,139 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.test.annotation.DirtiesContext;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 @SpringBootTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class TestPermissionService {
 
-    @MockBean
-    private JwtDecoder jwtDecoder;
+	@MockBean
+	private JwtDecoder jwtDecoder;
 
-    @Autowired
-    private PermitService permitService;
+	@Autowired
+	private PermitService permitService;
 
-    @Test
-    public void test001_aUserCreatedAFileSoAssignTheAllPermitsForTheOwner() {
-        String userId = "1";
-        String fileName = "test-file";
+	@Test
+	public void test001_aUserCreatedAFileSoAssignTheAllPermitsForTheOwner() {
+		String userId = "1";
+		String fileName = "test-file";
 
-        Permit permit = permitService.addOwnerPermits(userId, fileName);
+		Permit permit = permitService.addOwnerPermits(userId, fileName);
 
-        assertEquals(userId, permit.getUserId(), "permission created for other user");
-        assertEquals(fileName, permit.getFileName(), "permission created for other file");
-        assertEquals(Permissions.RWX, permit.getRwx(), "the owner does not have all the permits");
-    }
+		assertEquals(userId, permit.getUserId(), "permission created for other user");
+		assertEquals(fileName, permit.getFileName(), "permission created for other file");
+		assertEquals(Permissions.RWX, permit.getRwx(), "the owner does not have all the permits");
+	}
 
-    @Test void test002_userCreatedFileWithSameNameShouldThrowConflict() {
-        String userId = "1";
-        String fileName = "test-file";
+	@Test
+	void test002_userCreatedFileWithSameNameShouldThrowConflict() {
+		String userId = "1";
+		String fileName = "test-file";
 
-        permitService.addOwnerPermits(userId, fileName);
-        assertThrowsExactly(
-                ConflictException.class,
-                ()->permitService.addOwnerPermits(userId, fileName)
-        );
-    }
+		permitService.addOwnerPermits(userId, fileName);
+		assertThrowsExactly(ConflictException.class, () -> permitService.addOwnerPermits(userId, fileName));
+	}
 
-    @Test void test003_removePermitsFromOwnerIsForbidden() {
-        String userId = "1";
-        String fileName = "test-file";
+	@Test
+	void test003_removePermitsFromOwnerIsForbidden() {
+		String userId = "1";
+		String fileName = "test-file";
 
-        assertThrowsExactly(
-                ForbiddenException.class,
-                ()->permitService.removePermitsForSnippet(userId, fileName, userId, Permissions.RWX)
-        );
-    }
+		assertThrowsExactly(ForbiddenException.class,
+				() -> permitService.removePermitsForSnippet(userId, fileName, userId, Permissions.RWX));
+	}
 
-    @Test void test004_sharePermissionToFileToOtherUser() {
-        String ownerId = "1";
-        String userId = "2";
-        String fileName = "test-file";
+	@Test
+	void test004_sharePermissionToFileToOtherUser() {
+		String ownerId = "1";
+		String userId = "2";
+		String fileName = "test-file";
 
-        permitService.addOwnerPermits(ownerId, fileName);
-        Permit permit = permitService.sharePermitsForSnippet(ownerId, fileName, userId, Permissions.RWX);
+		permitService.addOwnerPermits(ownerId, fileName);
+		Permit permit = permitService.sharePermitsForSnippet(ownerId, fileName, userId, Permissions.RWX);
 
-        assertEquals(userId, permit.getUserId(), "permission created for other user");
-        assertEquals(ownerId, permit.getOwnerId(), "the owner is not the expected");
-        assertEquals(fileName, permit.getFileName(), "permission created for other file");
-        assertEquals(Permissions.RWX, permit.getRwx(), "the user does not have all the permits");
-    }
+		assertEquals(userId, permit.getUserId(), "permission created for other user");
+		assertEquals(ownerId, permit.getOwnerId(), "the owner is not the expected");
+		assertEquals(fileName, permit.getFileName(), "permission created for other file");
+		assertEquals(Permissions.RWX, permit.getRwx(), "the user does not have all the permits");
+	}
 
+	@Test
+	void test005_sharePermissionsToOwner() {
+		String ownerId = "1";
+		String fileName = "test-file";
 
-    @Test void test005_sharePermissionsToOwner() {
-        String ownerId = "1";
-        String fileName = "test-file";
+		assertThrowsExactly(ForbiddenException.class,
+				() -> permitService.sharePermitsForSnippet(ownerId, fileName, ownerId, Permissions.RWX));
+	}
 
-        assertThrowsExactly(
-                ForbiddenException.class,
-                ()->permitService.sharePermitsForSnippet(ownerId, fileName, ownerId, Permissions.RWX)
-        );
-    }
+	@Test
+	void test006_shareAFileThatTheOwnerDoesNotHaveThrowForbidden() {
+		String ownerId = "1";
+		String userId = "2";
+		String fileName = "test-file";
 
-    @Test void test006_shareAFileThatTheOwnerDoesNotHaveThrowForbidden() {
-        String ownerId = "1";
-        String userId = "2";
-        String fileName = "test-file";
+		assertThrowsExactly(ForbiddenException.class,
+				() -> permitService.sharePermitsForSnippet(ownerId, fileName, userId, Permissions.RWX));
+	}
 
-        assertThrowsExactly(
-                ForbiddenException.class,
-                ()->permitService.sharePermitsForSnippet(ownerId, fileName, userId, Permissions.RWX)
-        );
-    }
+	@Test
+	void test007_removePermissionsFromUser() {
+		String ownerId = "1";
+		String userId = "2";
+		String fileName = "test-file";
 
-    @Test void test007_removePermissionsFromUser() {
-        String ownerId = "1";
-        String userId = "2";
-        String fileName = "test-file";
+		permitService.addOwnerPermits(ownerId, fileName);
+		permitService.sharePermitsForSnippet(ownerId, fileName, userId, Permissions.RWX);
+		Permit permit = permitService.removePermitsForSnippet(ownerId, fileName, userId, Permissions.X);
 
-        permitService.addOwnerPermits(ownerId, fileName);
-        permitService.sharePermitsForSnippet(ownerId, fileName, userId, Permissions.RWX);
-        Permit permit = permitService.removePermitsForSnippet(ownerId, fileName, userId, Permissions.X);
+		assertEquals(userId, permit.getUserId(), "permission created for other user");
+		assertEquals(ownerId, permit.getOwnerId(), "the owner is not the expected");
+		assertEquals(fileName, permit.getFileName(), "permission created for other file");
+		assertEquals(Permissions.RW, permit.getRwx(), "The user has more or less permits that expected");
+	}
 
-        assertEquals(userId, permit.getUserId(), "permission created for other user");
-        assertEquals(ownerId, permit.getOwnerId(), "the owner is not the expected");
-        assertEquals(fileName, permit.getFileName(), "permission created for other file");
-        assertEquals(Permissions.RW, permit.getRwx(), "The user has more or less permits that expected");
-    }
+	@Test
+	void test008_removePermissionsFromUserWhereOwnerDoesNotHaveFileThenThrowForbidden() {
+		String ownerId = "1";
+		String userId = "2";
+		String userThatRemovePermitsId = "3";
+		String fileName = "test-file";
 
-    @Test void test008_removePermissionsFromUserWhereOwnerDoesNotHaveFileThenThrowForbidden() {
-        String ownerId = "1";
-        String userId = "2";
-        String userThatRemovePermitsId = "3";
-        String fileName = "test-file";
+		permitService.addOwnerPermits(ownerId, fileName);
+		permitService.sharePermitsForSnippet(ownerId, fileName, userId, Permissions.RWX);
 
-        permitService.addOwnerPermits(ownerId, fileName);
-        permitService.sharePermitsForSnippet(ownerId, fileName, userId, Permissions.RWX);
+		assertThrowsExactly(ForbiddenException.class,
+				() -> permitService.removePermitsForSnippet(userThatRemovePermitsId, fileName, userId, Permissions.X));
+	}
 
-        assertThrowsExactly(
-                ForbiddenException.class,
-                ()-> permitService.removePermitsForSnippet(userThatRemovePermitsId, fileName, userId, Permissions.X)
-        );
-    }
+	@Test
+	void test009_userHasPermissionWhenHasAllPermissionsThenTrue() {
+		String ownerId = "1";
+		String userId = "2";
+		String fileName = "test-file";
 
-    @Test void test009_userHasPermissionWhenHasAllPermissionsThenTrue() {
-        String ownerId = "1";
-        String userId = "2";
-        String fileName = "test-file";
+		permitService.addOwnerPermits(ownerId, fileName);
+		permitService.sharePermitsForSnippet(ownerId, fileName, userId, Permissions.RWX);
 
-        permitService.addOwnerPermits(ownerId, fileName);
-        permitService.sharePermitsForSnippet(ownerId, fileName, userId, Permissions.RWX);
+		assertTrue(permitService.userHasPermission(userId, ownerId, fileName, Permissions.RWX));
+		assertTrue(permitService.userHasPermission(userId, ownerId, fileName, Permissions.R));
+		assertTrue(permitService.userHasPermission(userId, ownerId, fileName, Permissions.W));
+		assertTrue(permitService.userHasPermission(userId, ownerId, fileName, Permissions.X));
+	}
 
-        assertTrue(permitService.userHasPermission(userId, ownerId, fileName, Permissions.RWX));
-        assertTrue(permitService.userHasPermission(userId, ownerId, fileName, Permissions.R));
-        assertTrue(permitService.userHasPermission(userId, ownerId, fileName, Permissions.W));
-        assertTrue(permitService.userHasPermission(userId, ownerId, fileName, Permissions.X));
-    }
+	@Test
+	void test010_userHasPermissionWhenHasSomePermissionsThenTrueAndFalse() {
+		String ownerId = "1";
+		String userId = "2";
+		String fileName = "test-file";
 
-    @Test void test010_userHasPermissionWhenHasSomePermissionsThenTrueAndFalse() {
-        String ownerId = "1";
-        String userId = "2";
-        String fileName = "test-file";
+		permitService.addOwnerPermits(ownerId, fileName);
+		permitService.sharePermitsForSnippet(ownerId, fileName, userId, Permissions.RX);
 
-        permitService.addOwnerPermits(ownerId, fileName);
-        permitService.sharePermitsForSnippet(ownerId, fileName, userId, Permissions.RX);
-
-        assertFalse(permitService.userHasPermission(userId, ownerId, fileName, Permissions.RWX));
-        assertTrue(permitService.userHasPermission(userId, ownerId, fileName, Permissions.R));
-        assertFalse(permitService.userHasPermission(userId, ownerId, fileName, Permissions.W));
-        assertTrue(permitService.userHasPermission(userId, ownerId, fileName, Permissions.X));
-    }
+		assertFalse(permitService.userHasPermission(userId, ownerId, fileName, Permissions.RWX));
+		assertTrue(permitService.userHasPermission(userId, ownerId, fileName, Permissions.R));
+		assertFalse(permitService.userHasPermission(userId, ownerId, fileName, Permissions.W));
+		assertTrue(permitService.userHasPermission(userId, ownerId, fileName, Permissions.X));
+	}
 
 }

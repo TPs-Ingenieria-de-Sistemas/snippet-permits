@@ -11,17 +11,19 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ControllerAdvice
 public class PermissionsExceptionHandler {
-    private final Logger logger = LoggerFactory.getLogger(DefaultErrorWebExceptionHandler.class);
+	private final Logger logger = LoggerFactory.getLogger(DefaultErrorWebExceptionHandler.class);
 
-    @ExceptionHandler(ForbiddenException.class)
-    @ResponseStatus(HttpStatus.FORBIDDEN)
-    @ResponseBody
-    protected String HandleForbiddenException(ForbiddenException ex) {
-        return ex.getMessage();
-    }
+	@ExceptionHandler(ForbiddenException.class)
+	@ResponseStatus(HttpStatus.FORBIDDEN)
+	@ResponseBody
+	protected String HandleForbiddenException(ForbiddenException ex) {
+		return ex.getMessage();
+	}
 
-    @ExceptionHandler(ConflictException.class)
-    @ResponseStatus(HttpStatus.CONFLICT)
-    @ResponseBody
-    protected String HandleConflictException(ConflictException exc) {return exc.getMessage();}
+	@ExceptionHandler(ConflictException.class)
+	@ResponseStatus(HttpStatus.CONFLICT)
+	@ResponseBody
+	protected String HandleConflictException(ConflictException exc) {
+		return exc.getMessage();
+	}
 }
