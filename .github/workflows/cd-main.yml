@@ -10,6 +10,13 @@ jobs:
   connect-and-update-server:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
+      - name: Extract gradle proyect name 
+        run: |
+          PROJECT_NAME=$(grep "^rootProject.name" settings.gradle | sed 's/rootProject.name[[:space:]]*=[[:space:]]*//g' | tr -d \'\")
+          echo $PROJECT_NAME
+          echo "PROJECT_NAME=$PROJECT_NAME" >> $GITHUB_ENV
+          
       - name: connect-and-run
         uses: appleboy/ssh-action@master
         with:
@@ -18,5 +25,5 @@ jobs:
           key: ${{ secrets.SSH_PROD_PRIVATE_KEY }}
           script: |
             cd infra
-            sudo docker compose pull
-            sudo docker compose up -d
+            sudo docker compose pull ${{ env.PROJECT_NAME }}
+            sudo -E docker compose up -d ${{ env.PROJECT_NAME }}
