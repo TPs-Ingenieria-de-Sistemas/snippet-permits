@@ -17,4 +17,9 @@ public class HealthController {
         logger.atInfo().log("health: ok");
         return ResponseEntity.ok().build();
     }
+    @GetMapping("fake-error")
+    public ResponseEntity<String> fakeError() {
+        logger.atError().log("health: ko");
+        return ResponseEntity.internalServerError().build();
+    }
 }
