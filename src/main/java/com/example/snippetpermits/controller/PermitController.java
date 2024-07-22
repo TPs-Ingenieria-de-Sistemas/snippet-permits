@@ -6,6 +6,8 @@ import com.example.snippetpermits.model.Permit;
 import com.example.snippetpermits.service.PermitService;
 import com.example.snippetpermits.service.UserService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -51,5 +53,12 @@ public class PermitController {
 		String userId = userService.getUserId();
 		Boolean hasPermission = permitService.userHasPermission(userId, ownerId, fileName, permission);
 		return ResponseEntity.status(HttpStatus.OK).body(hasPermission);
+	}
+
+	@GetMapping("/get-with-r-access")
+	public ResponseEntity<Page<?>> getAllReadableSnippets(Pageable pageable) {
+		String userId = userService.getUserId();
+		Page<?> page = permitService.getAllReadableSnippets(userId, pageable);
+		return ResponseEntity.status(HttpStatus.OK).body(page);
 	}
 }
