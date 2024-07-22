@@ -10,8 +10,5 @@ import org.springframework.data.repository.query.Param;
 public interface PermitRepository extends JpaRepository<Permit, Long> {
 	Permit findByFileNameAndOwnerIdAndUserId(String fileName, String ownerId, String userId);
 	@Query(value = "SELECT p FROM Permit p WHERE (p.userId = :userId AND p.rwx >= 4) OR p.ownerId = :userId")
-	Page<Permit> findByUserIdAndRPermissionsOrOwnerId(
-			@Param("userId") String userId,
-			Pageable pageable
-	);
+	Page<Permit> findByUserIdAndRPermissionsOrOwnerId(@Param("userId") String userId, Pageable pageable);
 }
