@@ -1,5 +1,6 @@
 package com.example.snippetpermits.service;
 
+import com.example.snippetpermits.controller.HealthController;
 import com.example.snippetpermits.exeption.ConflictException;
 import com.example.snippetpermits.exeption.EntityNotFoundException;
 import com.example.snippetpermits.exeption.ForbiddenException;
@@ -7,6 +8,9 @@ import com.example.snippetpermits.model.Permissions;
 import com.example.snippetpermits.model.Permit;
 import com.example.snippetpermits.repository.PermitRepository;
 import java.util.Objects;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -14,6 +18,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class PermitService {
 	private final PermitRepository repository;
+	private static final Logger logger = LoggerFactory.getLogger(HealthController.class);
+
 	public PermitService(PermitRepository repository) {
 		this.repository = repository;
 	}
@@ -67,9 +73,16 @@ public class PermitService {
 		if (theUserIsTheOwner(userId, ownerId))
 			return true;
 
+		logger.atWarn().log("reached userHasPermission with params: userId: {}, ownerId: {}, fileName: {}, permissions: {}",
+				userId, ownerId, fileName, permissions.getValue());
+
 		Permit permit = repository.findByFileNameAndOwnerIdAndUserId(fileName, ownerId, userId);
-		if (permit == null)
+
+		logger.atWarn().log("requested to repo with result: {}", permit);
+		if (permit == null) {
+			logger.atWarn().log("the result was null");
 			throw new EntityNotFoundException("no permission found for the user");
+		}
 
 		return permit.userHasPermission(permissions);
 	}

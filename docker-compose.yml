@@ -14,7 +14,7 @@ services:
       - AUTH0_API=${AUTH0_API}
       - AUTH0_DOMAIN=${AUTH0_DOMAIN}
     ports:
-      - "8080:8085"
+      - "8085:8085"
     depends_on:
       - db
 
