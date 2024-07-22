@@ -7,11 +7,15 @@ import com.example.snippetpermits.exeption.ForbiddenException;
 import com.example.snippetpermits.model.Permissions;
 import com.example.snippetpermits.model.Permit;
 import com.example.snippetpermits.service.PermitService;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.test.annotation.DirtiesContext;
 
@@ -150,4 +154,58 @@ public class TestPermissionService {
 		assertTrue(permitService.userHasPermission(userId, ownerId, fileName, Permissions.X));
 	}
 
+	@Test
+	void test011_userGetAllSnippetsWhereHeHasReadPermitsWhenHeHas2SnippetsWithReadThenReturnTwo() {
+		String userId = "1";
+		String userId2 = "2";
+		String fileName = "test-file";
+
+		permitService.addOwnerPermits(userId, fileName + "1");
+		permitService.addOwnerPermits(userId2, fileName + "2");
+
+		permitService.sharePermitsForSnippet(userId2, fileName + "2", userId, Permissions.RX);
+
+		Pageable pageable = PageRequest.of(0, 10);
+
+		Page page = permitService.getAllReadableSnippets(userId, pageable);
+		List<Permit> content = page.getContent();
+
+		assertEquals(2, content.size());
+	}
+
+	@Test
+	void test012_userGetAllSnippetsWhereHeHasReadPermitsWhenHeHas1SnippetsWithReadThenReturn1() {
+		String userId = "1";
+		String userId2 = "2";
+		String fileName = "test-file";
+
+		permitService.addOwnerPermits(userId, fileName + "1");
+		permitService.addOwnerPermits(userId2, fileName + "2");
+
+		Pageable pageable = PageRequest.of(0, 10);
+
+		Page page = permitService.getAllReadableSnippets(userId, pageable);
+		List<Permit> content = page.getContent();
+
+		assertEquals(1, content.size());
+	}
+
+	@Test
+	void test013_userGetAllSnippetsWhereHeHasReadPermitsWhenHeHas1RAnd1WThenReturn1() {
+		String userId = "1";
+		String userId2 = "2";
+		String fileName = "test-file";
+
+		permitService.addOwnerPermits(userId, fileName + "1");
+		permitService.addOwnerPermits(userId2, fileName + "2");
+
+		permitService.sharePermitsForSnippet(userId2, fileName + "2", userId, Permissions.X);
+
+		Pageable pageable = PageRequest.of(0, 10);
+
+		Page page = permitService.getAllReadableSnippets(userId, pageable);
+		List<Permit> content = page.getContent();
+
+		assertEquals(1, content.size());
+	}
 }

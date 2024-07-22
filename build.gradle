@@ -7,7 +7,7 @@ plugins {
 }
 
 group = 'com.example'
-version = '1.1.1'
+version = '1.2.0'
 
 java {
     sourceCompatibility="17"
@@ -79,7 +79,7 @@ jacocoTestCoverageVerification {
     violationRules {
         rule {
             limit {
-                minimum = 60.0
+                minimum = 0.6
             }
         }
     }
