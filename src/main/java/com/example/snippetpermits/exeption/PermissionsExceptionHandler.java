@@ -3,6 +3,7 @@ package com.example.snippetpermits.exeption;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.web.reactive.error.DefaultErrorWebExceptionHandler;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -26,4 +27,9 @@ public class PermissionsExceptionHandler {
 	protected String HandleConflictException(ConflictException exc) {
 		return exc.getMessage();
 	}
+
+	@ExceptionHandler(EntityNotFoundException.class)
+	@ResponseStatus(HttpStatus.NOT_FOUND)
+	@ResponseBody
+	protected String HandleEntityNotFoundException(EntityNotFoundException exc) {return exc.getMessage();}
 }
