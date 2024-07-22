@@ -6,6 +6,7 @@ import com.example.snippetpermits.model.Permit;
 import com.example.snippetpermits.service.PermitService;
 import com.example.snippetpermits.service.UserService;
 import jakarta.validation.Valid;
+import org.apache.coyote.BadRequestException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -49,10 +50,16 @@ public class PermitController {
 
 	@GetMapping("/{ownerId}/{fileName}")
 	public ResponseEntity<Boolean> hasPermissions(@PathVariable String ownerId, @PathVariable String fileName,
-			@RequestParam Permissions permission) {
+			@RequestParam Integer permission) throws BadRequestException {
 		String userId = userService.getUserId();
-		Boolean hasPermission = permitService.userHasPermission(userId, ownerId, fileName, permission);
-		return ResponseEntity.status(HttpStatus.OK).body(hasPermission);
+		try {
+			Permissions actualPermission = Permissions.fromValue(permission);
+			Boolean hasPermission = permitService.userHasPermission(userId, ownerId, fileName, actualPermission);
+			return ResponseEntity.status(HttpStatus.OK).body(hasPermission);
+		}catch (IllegalArgumentException e) {
+			throw new BadRequestException("expects a value between 0 and 10, representing RWX");
+		}
+
 	}
 
 	@GetMapping("/get-with-r-access")
