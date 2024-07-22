@@ -7,6 +7,9 @@ import com.example.snippetpermits.model.Permissions;
 import com.example.snippetpermits.model.Permit;
 import com.example.snippetpermits.repository.PermitRepository;
 import java.util.Objects;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -79,5 +82,9 @@ public class PermitService {
 
 	private boolean theUserIsTheOwner(String userId, String ownerId) {
 		return Objects.equals(userId, ownerId);
+	}
+
+	public Page<?> getAllReadableSnippets(String userId, Pageable pageable) {
+		return repository.findByUserIdAndRPermissionsOrOwnerId(userId, pageable);
 	}
 }
